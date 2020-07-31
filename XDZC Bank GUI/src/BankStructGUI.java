@@ -85,18 +85,15 @@ public class BankStructGUI
         try
         {
             FileReader file = new FileReader("bankdata.txt");                                           //Reading File Bankdata
-            RandomAccessFile position = new RandomAccessFile("balance.txt","r");                    //Reading file balance
             BufferedReader reading = new BufferedReader(file);
-            String[] searching={"testing"};
-            int index=scanaccount(acnum);                                                                       //get the index of the account number given
-            position.seek((index-1)*4);                                                                    //moving to the index
+            String[] searching= new String[5];
+            searching[0] = "Just for Initializing";
             while(stringcheck(searching))
             {
                 searching = reading.readLine().split(":");
                 if(searching[4].equals(acnum))                                                                  //comparing the account number given and Stored in Database
                 {
                     reading.close();
-                    position.close();
                     return searching;                                                                           //passing the string for displaying the results
                 }
             }
