@@ -205,6 +205,6 @@ public class BankStructGUI
             return ("Registered Successfully. Your account No. is: "+acNum);
         }
         else
-            return "You are Not eligible!!!";
+            return "You are Not eligible!";
     }
 }
