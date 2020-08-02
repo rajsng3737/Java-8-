@@ -3,23 +3,22 @@ import java.util.Random;
 import java.io.RandomAccessFile;
 public class BankStructGUI
 {
-    /*BankStruct constructor accepts 6 values , Account information is stored in bankdata.txt and balance is
-    stored in balance.txt
-     */
-    public BankStructGUI(String accountNumber,String accountName,int bal,String fathern,String address,int age)
+    /*BankStruct constructor accepts 6 values , Account information is stored in BankData.txt and balance is
+    stored in balance.txt */
+    public BankStructGUI(String accountNumber,String accountName,int bal,String fatherN,String address,int age)
     {
         if(accountNumber!=null)
         {
             try
             {
-                FileWriter account = new FileWriter("bankdata.txt",true);
+                FileWriter account = new FileWriter("BankData.txt",true);
                 FileWriter balance = new FileWriter("balance.txt",true);
-                PrintWriter accountwriter = new PrintWriter(account);
-                PrintWriter balancewriter = new PrintWriter(balance);
-                accountwriter.println(accountName+":"+fathern+":"+address+":"+age+":"+accountNumber);
-                balancewriter.println(bal);
-                accountwriter.close();
-                balancewriter.close();
+                PrintWriter accountWriter = new PrintWriter(account);
+                PrintWriter balanceWriter = new PrintWriter(balance);
+                accountWriter.println(accountName+":"+fatherN+":"+address+":"+age+":"+accountNumber);
+                balanceWriter.println(bal);
+                accountWriter.close();
+                balanceWriter.close();
             }
             catch(IOException ie){
                 System.out.println("Something Went Wrong");
@@ -27,42 +26,42 @@ public class BankStructGUI
 
         }
     }
-    /*scanaccount method tells us the index of a particular account in a bankdata.txt */
-    public int scanaccount(String acnum)
+    /*scanAccount method tells us the index of a particular account in a BankData.txt */
+    public int scanAccount(String acNum)
     {
         String search;
         int count = 1;
         try {
-            FileReader account = new FileReader("bankdata.txt");
-            BufferedReader accountreader = new BufferedReader(account);
-            int endindex = eof();
-            while (endindex>count)                  /* Searches till the account is not found */
+            FileReader account = new FileReader("BankData.txt");
+            BufferedReader accountReader = new BufferedReader(account);
+            int endIndex = eof();
+            while (endIndex>count)                  /* Searches till the account is not found */
             {
-                search = accountreader.readLine();  /*compares for every readline() ending with the provided argument or not */
-                if (search.endsWith(acnum)) {
+                search = accountReader.readLine();  /*compares for every readLine() ending with the provided argument or not */
+                if (search.endsWith(acNum)) {
                     return count;
                 }
                 count += 1;
             }
-            accountreader.close();
+            accountReader.close();
         } catch (IOException ie) {
             System.out.println("Something Went Wrong");
         }
         return 0;
     }
     /*This function tells us the index of the last account in the file*/
-    public int eof()
+    private int eof()
     {
         int count=1;
         try
         {
-            FileReader account = new FileReader("bankdata.txt");
-            BufferedReader accountreader = new BufferedReader(account);
-            while (accountreader.readLine() != null)            /*iterates till the readline doesn't give null which is at the end of the file*/
+            FileReader account = new FileReader("BankData.txt");
+            BufferedReader accountReader = new BufferedReader(account);
+            while (accountReader.readLine() != null)            /*iterates till the readLine doesn't give null which is at the end of the file*/
             {
                 count += 1;                                     /*Index Increases*/
             }
-            accountreader.close();
+            accountReader.close();
         }
         catch(IOException ie)
         {
@@ -70,32 +69,26 @@ public class BankStructGUI
         }
         return count;
     }
-    public boolean stringcheck(String[] check)              /*checks the string for empty or not*/
-    {
-        for (String s : check) {
-            if (s != null) {
-                return true;
-            }
-        }
-        return false;
-    }
     /*This method Displays the Details of a Given Account Number*/
-    public String[] getAccountDetails(String acnum)
+    public String[] getAccountDetails(String acNum)
     {
         try
         {
-            FileReader file = new FileReader("bankdata.txt");                                           //Reading File Bankdata
+            int count =1;
+            FileReader file = new FileReader("BankData.txt");                                           //Reading File BankData
             BufferedReader reading = new BufferedReader(file);
             String[] searching= new String[5];
             searching[0] = "Just for Initializing";
-            while(stringcheck(searching))
+            int check = eof();
+            while(count<check)
             {
                 searching = reading.readLine().split(":");
-                if(searching[4].equals(acnum))                                                                  //comparing the account number given and Stored in Database
+                if(searching[4].equals(acNum))                                                                  //comparing the account number given and Stored in Database
                 {
                     reading.close();
                     return searching;                                                                           //passing the string for displaying the results
                 }
+                count+=1;
             }
         }
         catch(IOException ie)
@@ -105,20 +98,20 @@ public class BankStructGUI
         return null;
     }
     /*This Function Reads and returns the balance of a given account number*/
-    public int getbalance(int index)
+    public int getBalance(int index)
     {
         int num=1;
         try
         {
             FileReader balance = new FileReader("Balance.txt");
-            BufferedReader balancereader = new BufferedReader(balance);
-            while(num != index)                                                                          //itereatin to the target account
+            BufferedReader balanceReader = new BufferedReader(balance);
+            while(num != index)                                                                          //iterating to the target account
             {
-                balancereader.readLine();                                                               //parsing through the file
+                balanceReader.readLine();                                                               //parsing through the file
                 num+=1;
             }
-            int bal = Integer.parseInt(balancereader.readLine());                                       //reading the balance
-            balancereader.close();
+            int bal = Integer.parseInt(balanceReader.readLine());                                       //reading the balance
+            balanceReader.close();
             return bal;
         }
         catch(IOException ie)
@@ -129,79 +122,73 @@ public class BankStructGUI
     }
     /*This Function Updates the balance of a particular account in the Database
      * the arguments passed are amount to be deposit or withdrawn and index of the account and option 3 for withdrawn and 4 for deposit*/
-    public void setbalance(int amount,int index,int option)
+    public void setBalance(int amount,int index,int option)
     {
         try {
             int count=1;
-            RandomAccessFile modifyposition = new RandomAccessFile("balance.txt", "r");
-            BufferedReader recoverbal = new BufferedReader(new FileReader("balance.txt"));
-            if (option == 3)    /*this is for withdrawal*/
-            {
-                modifyposition.seek((index - 1) * 4);           //moves the pointer to the index
-                String currentbal = modifyposition.readLine();      //storing the current balance of the account
-                System.out.println(currentbal);
-                int bal = Integer.parseInt(currentbal) - amount;    //Storing the balance after withdrawal
-                modifyposition.seek(0);                         //moving cursor back to the start of the file
-                modifyposition.close();
-                StringBuilder data = new StringBuilder();
-                //this is for the updated balance database
-                String datarecieved;                       //this is for reading the old database
-                while (count<index)                                 //reading the balance till the target account
+            RandomAccessFile modifyPosition = new RandomAccessFile("balance.txt", "r");
+            BufferedReader readBal = new BufferedReader(new FileReader("balance.txt"));
+            if (option == 3)    /*this is for withdrawal*/ 
                 {
-                    datarecieved = recoverbal.readLine();
-                    data.append(String.format("%s\n", datarecieved));
-                    count+=1;
-                }
-                data.append(String.format("%s\n", bal));             //storing the updated balance for the targeted account
-                System.out.println("Amount of Rs "+amount+" has been Withdrawn Successfully. \n Your Balance Remaining is: "+bal);
-                count+=1;                                           //increasing the count by 1 as we skipped the old data
-                recoverbal.readLine();                              //moving the cursor to the next data by which we skipped the old data
-                int endf = eof();
-                while(count<endf)                                  //now all the data after the target account is stored as before
+                modifyPosition.seek((index - 1) * 4);//moves the pointer to the index
+                while (count < index)
                 {
-                    datarecieved = recoverbal.readLine();
-                    data.append(String.format("%s\n", datarecieved));
-                    count+=1;
+                    readBal.readLine();
+                    count += 1;
                 }
-                recoverbal.close();
-                PrintWriter updatingbal = new PrintWriter(new FileWriter("balance.txt"));  /*we didn't use true for append bcz we will flush the old data and stor
-                                                                                                         the new data in the same file balance.txt*/
-                updatingbal.append(data.toString());                                                           /*new data is stored in the balance.txt*/
-                updatingbal.close();
+                String currentBal = readBal.readLine();      //storing the current balance of the account
+                int bal = Integer.parseInt(currentBal) - amount;    //Storing the balance after withdrawal
+                modifyPosition.seek(0);                         //moving cursor back to the start of the file
+                modifyPosition.close();
+                updatingBalDatabase(bal,index);
             }
-            else if( option == 4)
+            else if( option == 4)           //this is for deposit
             {
-                modifyposition.seek((index - 1) * 4);                                                            //moves the pointer to the index
-                String currentbal = modifyposition.readLine();                                                      //storing the current balance of the account
-                int bal = Integer.parseInt(currentbal) + amount;                                                    //Storing the balance after withdrawal
-                modifyposition.seek(0);                                                                         //moving cursor back to the start of the file
-                modifyposition.close();
-                StringBuilder data= new StringBuilder();                                                                                   //this is for the updated balance database
-                String datarecieved;                                                                       //this is for reading the old database
-                while (count<index)                                                                                 //reading the balance till the target account
+                modifyPosition.seek((index - 1) * 4);//moves the pointer to the index
+                while (count < index)
                 {
-                    datarecieved = recoverbal.readLine();
-                    data.append(String.format("%s\n", datarecieved));
-                    count+=1;
+                    readBal.readLine();
+                    count += 1;
                 }
-                data.append(String.format("%s\n", bal));                                                             //storing the updated balance for the targeted account
-                System.out.println("Amount of Rs "+amount+" has been Deposited Successfully. \n Your Balance is: "+bal);
-                count+=1;                                                                                           //increasing the count by 1 as we skipped the old data
-                recoverbal.readLine();                                                                              //moving the cursor to the next data by which we skipped the old data
-                int endf=eof();
-                while(count<endf)                                                                                  //now all the data after the target account is stored as before
-                {
-                    datarecieved = recoverbal.readLine();
-                    data.append(String.format("%s\n", datarecieved));
-                    count+=1;
-                }
-                recoverbal.close();
-                PrintWriter updatingbal = new PrintWriter(new FileWriter("balance.txt"));               /*we didn't use true for append bcz we will flush the old data and stor
-                                                                                                                    the new data in the same file balance.txt*/
-                updatingbal.append(data.toString());                                                           /*new data is stored in the balance.txt*/
-                updatingbal.close();
+                String currentBal = readBal.readLine();      //storing the current balance of the account
+                int bal = Integer.parseInt(currentBal) + amount;    //Storing the balance after withdrawal
+                modifyPosition.seek(0);                         //moving cursor back to the start of the file
+                modifyPosition.close();
+                updatingBalDatabase(bal,index);
             }
-
+        }
+        catch(IOException ie)
+        {
+            System.out.println("Something Went Wrong");
+        }
+    }
+    private void updatingBalDatabase(int bal,int index) 
+    {
+        try {
+            BufferedReader recoverBal = new BufferedReader(new FileReader("balance.txt"));
+            StringBuilder data = new StringBuilder();   //this is for the updated balance database
+            String dataReceived;                        //this is for reading the old database
+            int count = 1;
+            while (count < index)                                 //reading the balance till the target account
+            {
+                dataReceived = recoverBal.readLine();
+                data.append(String.format("%s\n", dataReceived));
+                count += 1;
+            }
+            data.append(String.format("%s\n", bal));             //storing the updated balance for the targeted account
+            count += 1;                                           //increasing the count by 1 as we skipped the old data
+            recoverBal.readLine();                              //moving the cursor to the next data by which we skipped the old data
+            int fileEnd = eof();
+            while (count < fileEnd)                                  //now all the data after the target account is stored as before
+            {
+                dataReceived = recoverBal.readLine();
+                data.append(String.format("%s\n", dataReceived));
+                count += 1;
+            }
+            recoverBal.close();
+            PrintWriter updatingBal = new PrintWriter(new FileWriter("balance.txt"));  /*we didn't use true for append bcz we will flush the old data and store the new data in the same file balance.txt*/
+            updatingBal.append(data.toString());                                                           /*new data is stored in the balance.txt*/
+            updatingBal.close();
         }
         catch(IOException ie)
         {
@@ -209,18 +196,15 @@ public class BankStructGUI
         }
     }
     /*This Function opens the bank Account and Store it in the data base*/
-    public String openBankAccount(String acname,int age,String father,String address)
+    public String openBankAccount(String acName,int age,String father,String address)
     {
         if (age>18)
         {
-            String acnum = String.valueOf(100000000 + new Random().nextInt(900000000));        /*Randomly Generating the Account number of 9 digits*/
-            BankStructGUI bankStruct = new BankStructGUI(acnum, acname,1000,father,address,age);
-            return ("Registered Successfully. Your account No. is: "+acnum);
+            String acNum = String.valueOf(100000000 + new Random().nextInt(900000000));        /*Randomly Generating the Account number of 9 digits*/
+            BankStructGUI bankStruct = new BankStructGUI(acNum, acName,1000,father,address,age);
+            return ("Registered Successfully. Your account No. is: "+acNum);
         }
         else
             return "You are Not eligible!!!";
     }
 }
-
-
-
